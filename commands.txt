@@ -1,0 +1,6 @@
+to run: 
+1. venv\Scripts\activate
+2. python -m uvicorn main:app --reload
+
+or 
+uvicorn main:app --reload
