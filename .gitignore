@@ -4,6 +4,11 @@ __pycache__/
 *.so
 *.pyc
 
+# devflow_artefacts/
+devflow_artefacts/distilbert
+devflow_artefacts/spacy_ner
+
+
 # mp3 files
 sample_mp3/
 

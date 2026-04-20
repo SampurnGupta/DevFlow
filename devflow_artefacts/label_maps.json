@@ -1,0 +1,20 @@
+{
+  "intent2id": {
+    "debug": 0,
+    "generate": 1,
+    "refactor": 2,
+    "explain": 3,
+    "scaffold": 4,
+    "test": 5,
+    "document": 6
+  },
+  "id2intent": {
+    "0": "debug",
+    "1": "generate",
+    "2": "refactor",
+    "3": "explain",
+    "4": "scaffold",
+    "5": "test",
+    "6": "document"
+  }
+}

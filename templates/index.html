@@ -1,77 +1,125 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>DevFlow</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
-<style>
-@keyframes floatSlow {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-}
+    <style>
+        @keyframes floatSlow {
+            0% {
+                transform: translateY(0px);
+            }
 
-.floating {
-    animation: floatSlow 12s ease-in-out infinite;
-}
+            50% {
+                transform: translateY(-25px);
+            }
 
-@keyframes chaosMove {
-    0% { transform: translateX(0px); }
-    50% { transform: translateX(-30px); }
-    100% { transform: translateX(0px); }
-}
+            100% {
+                transform: translateY(0px);
+            }
+        }
 
-@keyframes calmMove {
-    0% { transform: translateX(0px); }
-    50% { transform: translateX(10px); }
-    100% { transform: translateX(0px); }
-}
+        .floating {
+            animation: floatSlow 12s ease-in-out infinite;
+        }
 
-#chaosWave {
-    animation: chaosMove 6s ease-in-out infinite;
-}
+        @keyframes chaosMove {
+            0% {
+                transform: translateX(0px);
+            }
 
-#calmWave {
-    animation: calmMove 8s ease-in-out infinite;
-}
+            50% {
+                transform: translateX(-30px);
+            }
 
-@keyframes floatSlow {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-25px); }
-    100% { transform: translateY(0px); }
-}
+            100% {
+                transform: translateX(0px);
+            }
+        }
 
-@keyframes rotateSlow {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        @keyframes calmMove {
+            0% {
+                transform: translateX(0px);
+            }
 
-@keyframes pulseSoft {
-    0% { opacity: 0.3; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0.3; }
-}
+            50% {
+                transform: translateX(10px);
+            }
 
-@keyframes wave {
-    0% { height: 6px; }
-    50% { height: 20px; }
-    100% { height: 6px; }
-}
+            100% {
+                transform: translateX(0px);
+            }
+        }
 
-.floating { animation: floatSlow 10s ease-in-out infinite; }
-.rotating { animation: rotateSlow 60s linear infinite; }
-.pulsing { animation: pulseSoft 2s ease-in-out infinite; }
+        #chaosWave {
+            animation: chaosMove 6s ease-in-out infinite;
+        }
 
-.wave-bar {
-    width: 4px;
-    height: 8px;
-    background: white;
-    margin: 0 3px;
-    border-radius: 2px;
-    animation: wave 1s ease-in-out infinite;
-}
+        #calmWave {
+            animation: calmMove 8s ease-in-out infinite;
+        }
 
-/* .wave-bar {
+        @keyframes rotateSlow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulseSoft {
+            0% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes wave {
+            0% {
+                height: 6px;
+            }
+
+            50% {
+                height: 20px;
+            }
+
+            100% {
+                height: 6px;
+            }
+        }
+
+        .floating {
+            animation: floatSlow 10s ease-in-out infinite;
+        }
+
+        .rotating {
+            animation: rotateSlow 60s linear infinite;
+        }
+
+        .pulsing {
+            animation: pulseSoft 2s ease-in-out infinite;
+        }
+
+        .wave-bar {
+            width: 4px;
+            height: 8px;
+            background: white;
+            margin: 0 3px;
+            border-radius: 2px;
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        /* .wave-bar {
     width: 3px;
     background: white;
     margin: 0 2px;
@@ -79,31 +127,44 @@
     animation: wave 1s ease-in-out infinite;
 } */
 
-.wave-bar:nth-child(2) { animation-delay: .1s; }
-.wave-bar:nth-child(3) { animation-delay: .2s; }
-.wave-bar:nth-child(4) { animation-delay: .3s; }
-.wave-bar:nth-child(5) { animation-delay: .4s; }
+        .wave-bar:nth-child(2) {
+            animation-delay: .1s;
+        }
 
-.parallax {
-    transition: transform 0.2s ease-out;
-}
-</style>
+        .wave-bar:nth-child(3) {
+            animation-delay: .2s;
+        }
+
+        .wave-bar:nth-child(4) {
+            animation-delay: .3s;
+        }
+
+        .wave-bar:nth-child(5) {
+            animation-delay: .4s;
+        }
+
+        .parallax {
+            transition: transform 0.2s ease-out;
+        }
+    </style>
 </head>
 
 <body class="bg-[#F5F1E8] text-[#1A1A1A] min-h-screen relative overflow-x-hidden">
 
     <!-- Decorative Elements -->
-<div class="absolute top-40 left-10 w-32 h-32 border border-[#7B6CF6] rounded-full opacity-30 animate-pulse"></div>
-<div class="absolute top-96 right-20 w-24 h-24 border-2 border-[#D8C8FF] rounded-full opacity-40 floating"></div>
-<div class="absolute bottom-20 left-1/3 w-40 h-40 bg-[#D8C8FF] rounded-full blur-3xl opacity-30 floating"></div>
+    <div class="absolute top-40 left-10 w-32 h-32 border border-[#7B6CF6] rounded-full opacity-30 animate-pulse"></div>
+    <div class="absolute top-96 right-20 w-24 h-24 border-2 border-[#D8C8FF] rounded-full opacity-40 floating"></div>
+    <div class="absolute bottom-20 left-1/3 w-40 h-40 bg-[#D8C8FF] rounded-full blur-3xl opacity-30 floating"></div>
 
-<!-- Parallax Floating Graphics -->
-<div id="blob1" class="absolute top-20 left-10 w-40 h-40 bg-[#D8C8FF] rounded-full blur-3xl opacity-40 parallax"></div>
-<div id="blob2" class="absolute bottom-40 right-10 w-52 h-52 bg-[#FFB6B6] rounded-full blur-3xl opacity-30 parallax"></div>
-<div class="absolute top-1/3 right-1/4 w-32 h-32 border-2 border-[#7B6CF6] rounded-full opacity-30 rotating"></div>
+    <!-- Parallax Floating Graphics -->
+    <div id="blob1" class="absolute top-20 left-10 w-40 h-40 bg-[#D8C8FF] rounded-full blur-3xl opacity-40 parallax">
+    </div>
+    <div id="blob2"
+        class="absolute bottom-40 right-10 w-52 h-52 bg-[#FFB6B6] rounded-full blur-3xl opacity-30 parallax"></div>
+    <div class="absolute top-1/3 right-1/4 w-32 h-32 border-2 border-[#7B6CF6] rounded-full opacity-30 rotating"></div>
 
-<!-- DevFlow Brand + Wave Transformation -->
-<!-- <div class="relative overflow-hidden py-24 text-center"> -->
+    <!-- DevFlow Brand + Wave Transformation -->
+    <!-- <div class="relative overflow-hidden py-24 text-center"> -->
 
     <!-- Chaotic Wave -->
     <!-- <svg viewBox="0 0 1440 120" class="w-full absolute top-0 left-0 opacity-60">
@@ -131,294 +192,294 @@
 </div>
  -->
 
-<div class="max-w-5xl mx-auto px-6 py-20 relative z-10">
+    <div class="max-w-5xl mx-auto px-6 py-20 relative z-10">
 
-    <!-- Hero -->
-    <div class="text-center mb-24 relative">
-        <h1 class="text-6xl font-serif tracking-tight leading-tight relative inline-block">
-            DevFlow<br>
-            <span class="relative z-10">Don’t type, just structure</span>
-            <span class="absolute left-0 right-0 bottom-2 h-4 bg-[#D8C8FF] -z-0 rounded-full"></span>
-        </h1>
+        <!-- Hero -->
+        <div class="text-center mb-24 relative">
+            <h1 class="text-6xl font-serif tracking-tight leading-tight relative inline-block">
+                DevFlow<br>
+                <span class="relative z-10">Don’t type, just structure</span>
+                <span class="absolute left-0 right-0 bottom-2 h-4 bg-[#D8C8FF] -z-0 rounded-full"></span>
+            </h1>
 
-        <p class="mt-8 text-lg text-gray-600 max-w-xl mx-auto">
-            DevFlow transforms developer speech into 
-            </br>structured LLM-ready intelligence.
-        </p>
+            <p class="mt-8 text-lg text-gray-600 max-w-xl mx-auto">
+                DevFlow transforms developer speech into
+                </br>structured LLM-ready intelligence.
+            </p>
 
-        <!-- Mode Selector -->
-        <div class="flex justify-center gap-3 mt-10 flex-wrap">
-            <button class="modeChip active px-4 py-1 rounded-full bg-black text-white text-sm" data-mode="debug">Debug</button>
-            <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm" data-mode="feature">Feature</button>
-            <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm" data-mode="refactor">Refactor</button>
-            <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm" data-mode="architecture">Architecture</button>
-        </div>
-    </div>
-
-    <!-- Recording Card -->
-    <div class="bg-white rounded-3xl shadow-md p-10 mb-16 text-center">
-    <!-- <div class="bg-white rounded-3xl shadow-xl p-16 mb-24 text-center transition hover:shadow-2xl"> -->
-
-        <button id="recordBtn"
-            class="w-28 h-28 rounded-full bg-[#7B6CF6] flex items-center justify-center shadow-lg hover:scale-105 transition relative">
-
-            <div id="micIcon" class="text-white text-3xl z-10">🎙</div>
-
-            <!-- Waveform -->
-            <div id="waveform"
-                class="absolute inset-0 flex items-center justify-center hidden z-10">
-                <div class="flex items-end h-8">
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                    <div class="wave-bar"></div>
-                </div>
+            <!-- Mode Selector -->
+            <div class="flex justify-center gap-3 mt-10 flex-wrap">
+                <button class="modeChip active px-4 py-1 rounded-full bg-black text-white text-sm"
+                    data-mode="debug">Debug</button>
+                <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm"
+                    data-mode="feature">Feature</button>
+                <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm"
+                    data-mode="refactor">Refactor</button>
+                <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm"
+                    data-mode="architecture">Architecture</button>
             </div>
+        </div>
 
-            <!-- Glow Layer -->
-            <div id="recordGlow"
-                class="absolute inset-0 bg-white opacity-0 rounded-full transition"></div>
+        <!-- Recording Card -->
+        <div class="bg-white rounded-3xl shadow-md p-10 mb-16 text-center">
+            <!-- <div class="bg-white rounded-3xl shadow-xl p-16 mb-24 text-center transition hover:shadow-2xl"> -->
 
-            <!-- <div id="waveform" class="absolute flex items-end justify-center hidden">
+            <button id="recordBtn"
+                class="w-28 h-28 rounded-full bg-[#7B6CF6] flex items-center justify-center shadow-lg hover:scale-105 transition relative">
+
+                <div id="micIcon" class="text-white text-3xl z-10">🎙</div>
+
+                <!-- Waveform -->
+                <div id="waveform" class="absolute inset-0 flex items-center justify-center hidden z-10">
+                    <div class="flex items-end h-8">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Glow Layer -->
+                <div id="recordGlow" class="absolute inset-0 bg-white opacity-0 rounded-full transition"></div>
+
+                <!-- <div id="waveform" class="absolute flex items-end justify-center hidden">
                 <div class="wave-bar"></div>
                 <div class="wave-bar"></div>
                 <div class="wave-bar"></div>
                 <div class="wave-bar"></div>
                 <div class="wave-bar"></div>
             </div> -->
-        </button>
+            </button>
 
-        <div id="status" class="mt-6 text-gray-500 text-sm"></div>
-        <div id="thinking"
-            class="hidden mt-4 text-[#7B6CF6] text-sm flex items-center gap-2">
-            <span class="w-2 h-2 bg-[#7B6CF6] rounded-full animate-ping"></span>
-            DevFlow is thinking…
-        </div>
-        <!-- <div id="thinking" class="hidden mt-4 text-[#7B6CF6] pulsing text-sm">
+            <div id="status" class="mt-6 text-gray-500 text-sm"></div>
+            <div id="thinking" class="hidden mt-4 text-[#7B6CF6] text-sm flex items-center gap-2">
+                <span class="w-2 h-2 bg-[#7B6CF6] rounded-full animate-ping"></span>
+                DevFlow is thinking…
+            </div>
+            <!-- <div id="thinking" class="hidden mt-4 text-[#7B6CF6] pulsing text-sm">
             DevFlow is thinking…
         </div> -->
-    </div>
-
-    <!-- Output Section -->
-    <div class="grid md:grid-cols-2 gap-12">
-
-        <!-- Transcript -->
-        <div>
-            <div class="flex justify-between items-center mb-3">
-                <h2 class="font-semibold text-lg">Transcript</h2>
-                <button id="commitBtn"
-                    class="hidden bg-black text-white text-sm px-4 py-1 rounded-full">
-                    Commit changes
-                </button>
-            </div>
-
-            <textarea id="transcript"
-                class="w-full h-72 bg-white rounded-2xl p-5 shadow-sm resize-none outline-none focus:ring-2 focus:ring-[#7B6CF6]"
-                placeholder="Your transcript will appear here..."></textarea>
         </div>
 
-        <!-- Structured Output -->
-        <div>
-            <div class="flex justify-between items-center mb-3">
-                <h2 class="font-semibold text-lg">Structured JSON</h2>
-                <div id="clarityScore"
-                     class="px-4 py-1 bg-[#E8E3FF] text-[#5A48D6] rounded-full text-sm font-medium">
-                    Clarity: --
+        <!-- Output Section -->
+        <div class="grid md:grid-cols-2 gap-12">
+
+            <!-- Transcript -->
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-semibold text-lg">Transcript</h2>
+                    <button id="commitBtn" class="hidden bg-black text-white text-sm px-4 py-1 rounded-full">
+                        Commit changes
+                    </button>
+                </div>
+
+                <textarea id="transcript"
+                    class="w-full h-72 bg-white rounded-2xl p-5 shadow-sm resize-none outline-none focus:ring-2 focus:ring-[#7B6CF6]"
+                    placeholder="Your transcript will appear here..."></textarea>
+            </div>
+
+            <!-- Structured Output -->
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-semibold text-lg">Structured JSON</h2>
+                    <div id="clarityScore"
+                        class="px-4 py-1 bg-[#E8E3FF] text-[#5A48D6] rounded-full text-sm font-medium">
+                        Clarity: --
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl p-5 shadow-sm h-72 overflow-y-auto transition hover:shadow-xl hover:-translate-y-1">
+                    <pre id="structured" class="text-sm whitespace-pre-wrap"></pre>
+                </div>
+
+                <button id="exportBtn" class="mt-4 px-4 py-2 bg-black text-white rounded-full text-sm">
+                    Export JSON
+                </button>
+
+                <!-- Suggestions -->
+                <div id="suggestionsPanel" class="hidden mt-6 bg-[#FFF3CD] border border-[#FFE69C] text-[#856404]
+                        rounded-2xl p-5">
+                    <h3 class="font-semibold mb-3">Smart Suggestions</h3>
+                    <ul id="suggestionsList" class="list-disc pl-5 space-y-2 text-sm"></ul>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 shadow-sm h-72 overflow-y-auto transition hover:shadow-xl hover:-translate-y-1">
-                <pre id="structured" class="text-sm whitespace-pre-wrap"></pre>
-            </div>
-
-            <button id="exportBtn"
-                class="mt-4 px-4 py-2 bg-black text-white rounded-full text-sm">
-                Export JSON
-            </button>
-
-            <!-- Suggestions -->
-            <div id="suggestionsPanel"
-                 class="hidden mt-6 bg-[#FFF3CD] border border-[#FFE69C] text-[#856404]
-                        rounded-2xl p-5">
-                <h3 class="font-semibold mb-3">Smart Suggestions</h3>
-                <ul id="suggestionsList" class="list-disc pl-5 space-y-2 text-sm"></ul>
-            </div>
         </div>
 
     </div>
 
-</div>
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let originalTranscript = "";
+        let currentMode = "debug";
 
-<script>
-let mediaRecorder;
-let audioChunks = [];
-let originalTranscript = "";
-let currentMode = "debug";
+        const recordBtn = document.getElementById("recordBtn");
+        const transcriptArea = document.getElementById("transcript");
+        const commitBtn = document.getElementById("commitBtn");
+        const statusDiv = document.getElementById("status");
+        const waveform = document.getElementById("waveform");
+        const micIcon = document.getElementById("micIcon");
+        const thinking = document.getElementById("thinking");
 
-const recordBtn = document.getElementById("recordBtn");
-const transcriptArea = document.getElementById("transcript");
-const commitBtn = document.getElementById("commitBtn");
-const statusDiv = document.getElementById("status");
-const waveform = document.getElementById("waveform");
-const micIcon = document.getElementById("micIcon");
-const thinking = document.getElementById("thinking");
-
-/* ======================
-   MODE SELECTOR
-====================== */
-document.querySelectorAll(".modeChip").forEach(btn => {
-    btn.onclick = function() {
-        document.querySelectorAll(".modeChip").forEach(b => {
-            b.classList.remove("bg-black","text-white","active");
-            b.classList.add("bg-white","shadow");
+        /* ======================
+           MODE SELECTOR
+        ====================== */
+        document.querySelectorAll(".modeChip").forEach(btn => {
+            btn.onclick = function () {
+                document.querySelectorAll(".modeChip").forEach(b => {
+                    b.classList.remove("bg-black", "text-white", "active");
+                    b.classList.add("bg-white", "shadow");
+                });
+                this.classList.add("bg-black", "text-white", "active");
+                this.classList.remove("bg-white", "shadow");
+                currentMode = this.dataset.mode;
+            };
         });
-        this.classList.add("bg-black","text-white","active");
-        this.classList.remove("bg-white","shadow");
-        currentMode = this.dataset.mode;
-    };
-});
 
-/* ======================
-   RECORDING
-====================== */
-recordBtn.onclick = async () => {
+        /* ======================
+           RECORDING
+        ====================== */
+        recordBtn.onclick = async () => {
 
-    if (!mediaRecorder || mediaRecorder.state === "inactive") {
+            if (!mediaRecorder || mediaRecorder.state === "inactive") {
 
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
 
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
 
-        mediaRecorder.onstop = async () => {
+                mediaRecorder.onstop = async () => {
 
-            // STOP RECORDING VISUALS
-            waveform.classList.add("hidden");
-            micIcon.classList.remove("hidden");
-            document.getElementById("recordGlow").style.opacity = "0";
+                    // STOP RECORDING VISUALS
+                    waveform.classList.add("hidden");
+                    micIcon.classList.remove("hidden");
+                    document.getElementById("recordGlow").style.opacity = "0";
 
-            statusDiv.innerText = "Processing…";
+                    statusDiv.innerText = "Processing…";
 
-            const blob = new Blob(audioChunks, { type: "audio/wav" });
-            audioChunks = [];
+                    const blob = new Blob(audioChunks, { type: "audio/wav" });
+                    audioChunks = [];
 
-            const formData = new FormData();
-            formData.append("file", blob, "recording.wav");
-            formData.append("mode", currentMode);
+                    const formData = new FormData();
+                    formData.append("file", blob, "recording.wav");
+                    formData.append("mode", currentMode);
+
+                    thinking.classList.remove("hidden");
+
+                    const res = await fetch("/process", { method: "POST", body: formData });
+                    const result = await res.json();
+
+                    thinking.classList.add("hidden");
+
+                    transcriptArea.value = result.transcript;
+                    originalTranscript = result.transcript;
+                    commitBtn.classList.add("hidden");
+
+                    updateStructured(result.structured_output);
+
+                    statusDiv.innerText = "Done.";
+                };
+
+                mediaRecorder.start();
+
+                // START RECORDING VISUALS
+                micIcon.classList.add("hidden");
+                waveform.classList.remove("hidden");
+                document.getElementById("recordGlow").style.opacity = "0.2";
+
+                statusDiv.innerText = "Recording…";
+
+            } else {
+                mediaRecorder.stop();
+            }
+        };
+
+        /* ======================
+           COMMIT CHANGES
+        ====================== */
+        transcriptArea.addEventListener("input", () => {
+            if (transcriptArea.value !== originalTranscript)
+                commitBtn.classList.remove("hidden");
+            else
+                commitBtn.classList.add("hidden");
+        });
+
+        commitBtn.onclick = async () => {
 
             thinking.classList.remove("hidden");
 
-            const res = await fetch("/process", { method:"POST", body:formData });
-            const result = await res.json();
+            const res = await fetch("/structure", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ transcript: transcriptArea.value, mode: currentMode })
+            });
 
+            const result = await res.json();
             thinking.classList.add("hidden");
 
-            transcriptArea.value = result.transcript;
-            originalTranscript = result.transcript;
+            originalTranscript = transcriptArea.value;
             commitBtn.classList.add("hidden");
 
-            updateStructured(result.structured_output);
-
-            statusDiv.innerText = "Done.";
+            updateStructured(result);
         };
 
-        mediaRecorder.start();
+        /* ======================
+           UPDATE STRUCTURED DATA
+        ====================== */
+        function updateStructured(data) {
+            if (data.structured_output) {
+                data = data.structured_output;
+            }
+            document.getElementById("structured").innerText =
+                JSON.stringify(data, null, 2);
 
-        // START RECORDING VISUALS
-        micIcon.classList.add("hidden");
-        waveform.classList.remove("hidden");
-        document.getElementById("recordGlow").style.opacity = "0.2";
+            const gaps = data.clarity_gaps_detected?.length || 0;
+            const score = Math.max(0, 100 - gaps * 15);
+            document.getElementById("clarityScore").innerText = "Clarity: " + score + "%";
 
-        statusDiv.innerText = "Recording…";
+            const panel = document.getElementById("suggestionsPanel");
+            const list = document.getElementById("suggestionsList");
+            list.innerHTML = "";
 
-    } else {
-        mediaRecorder.stop();
-    }
-};
+            if (gaps > 0) {
+                panel.classList.remove("hidden");
+                data.clarity_gaps_detected.forEach(g => {
+                    const li = document.createElement("li");
+                    li.innerText = g;
+                    list.appendChild(li);
+                });
+            } else panel.classList.add("hidden");
+        }
 
-/* ======================
-   COMMIT CHANGES
-====================== */
-transcriptArea.addEventListener("input", () => {
-    if (transcriptArea.value !== originalTranscript)
-        commitBtn.classList.remove("hidden");
-    else
-        commitBtn.classList.add("hidden");
-});
+        /* ======================
+           EXPORT
+        ====================== */
+        document.getElementById("exportBtn").onclick = function () {
+            const jsonText = document.getElementById("structured").innerText;
+            const blob = new Blob([jsonText], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "devflow-output.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        };
 
-commitBtn.onclick = async () => {
-
-    thinking.classList.remove("hidden");
-
-    const res = await fetch("/structure", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ transcript: transcriptArea.value, mode: currentMode })
-    });
-
-    const result = await res.json();
-    thinking.classList.add("hidden");
-
-    originalTranscript = transcriptArea.value;
-    commitBtn.classList.add("hidden");
-
-    updateStructured(result);
-};
-
-/* ======================
-   UPDATE STRUCTURED DATA
-====================== */
-function updateStructured(data) {
-    if (data.structured_output) {
-        data = data.structured_output;
-    }
-    document.getElementById("structured").innerText =
-        JSON.stringify(data, null, 2);
-
-    const gaps = data.clarity_gaps_detected?.length || 0;
-    const score = Math.max(0, 100 - gaps * 15);
-    document.getElementById("clarityScore").innerText = "Clarity: " + score + "%";
-
-    const panel = document.getElementById("suggestionsPanel");
-    const list = document.getElementById("suggestionsList");
-    list.innerHTML = "";
-
-    if (gaps > 0) {
-        panel.classList.remove("hidden");
-        data.clarity_gaps_detected.forEach(g => {
-            const li = document.createElement("li");
-            li.innerText = g;
-            list.appendChild(li);
+        /* ======================
+           PARALLAX
+        ====================== */
+        window.addEventListener("scroll", () => {
+            const offset = window.scrollY * 0.2;
+            document.getElementById("blob1").style.transform =
+                "translateY(" + offset + "px)";
+            document.getElementById("blob2").style.transform =
+                "translateY(" + (-offset) + "px)";
         });
-    } else panel.classList.add("hidden");
-}
-
-/* ======================
-   EXPORT
-====================== */
-document.getElementById("exportBtn").onclick = function() {
-    const jsonText = document.getElementById("structured").innerText;
-    const blob = new Blob([jsonText], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "devflow-output.json";
-    a.click();
-    URL.revokeObjectURL(url);
-};
-
-/* ======================
-   PARALLAX
-====================== */
-window.addEventListener("scroll", () => {
-    const offset = window.scrollY * 0.2;
-    document.getElementById("blob1").style.transform =
-        "translateY(" + offset + "px)";
-    document.getElementById("blob2").style.transform =
-        "translateY(" + (-offset) + "px)";
-});
-</script>
+    </script>
 
 </body>
+
 </html>
