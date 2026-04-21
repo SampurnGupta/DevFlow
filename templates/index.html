@@ -1,483 +1,825 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>DevFlow</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevFlow — Developer Intent Engine</title>
+    <meta name="description"
+        content="DevFlow transforms developer speech into structured, LLM-ready JSON using voice, local NLP classification, and GPT-4.1.">
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; }
+        .serif { font-family: 'Instrument Serif', serif; }
+
+        /* ── Animations ─────────────────────────────────── */
         @keyframes floatSlow {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-25px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
-
-        .floating {
-            animation: floatSlow 12s ease-in-out infinite;
-        }
-
-        @keyframes chaosMove {
-            0% {
-                transform: translateX(0px);
-            }
-
-            50% {
-                transform: translateX(-30px);
-            }
-
-            100% {
-                transform: translateX(0px);
-            }
-        }
-
-        @keyframes calmMove {
-            0% {
-                transform: translateX(0px);
-            }
-
-            50% {
-                transform: translateX(10px);
-            }
-
-            100% {
-                transform: translateX(0px);
-            }
-        }
-
-        #chaosWave {
-            animation: chaosMove 6s ease-in-out infinite;
-        }
-
-        #calmWave {
-            animation: calmMove 8s ease-in-out infinite;
-        }
-
         @keyframes rotateSlow {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
-
-        @keyframes pulseSoft {
-            0% {
-                opacity: 0.3;
-            }
-
-            50% {
-                opacity: 0.8;
-            }
-
-            100% {
-                opacity: 0.3;
-            }
-        }
-
         @keyframes wave {
-            0% {
-                height: 6px;
-            }
-
-            50% {
-                height: 20px;
-            }
-
-            100% {
-                height: 6px;
-            }
+            0%, 100% { height: 5px; }
+            50% { height: 22px; }
         }
 
-        .floating {
-            animation: floatSlow 10s ease-in-out infinite;
-        }
-
-        .rotating {
-            animation: rotateSlow 60s linear infinite;
-        }
-
-        .pulsing {
-            animation: pulseSoft 2s ease-in-out infinite;
-        }
+        .floating { animation: floatSlow 10s ease-in-out infinite; }
+        .rotating { animation: rotateSlow 65s linear infinite; }
+        .parallax { transition: transform 0.15s ease-out; }
 
         .wave-bar {
-            width: 4px;
-            height: 8px;
-            background: white;
-            margin: 0 3px;
+            width: 4px; height: 8px;
+            background: white; margin: 0 2px;
             border-radius: 2px;
             animation: wave 1s ease-in-out infinite;
         }
+        .wave-bar:nth-child(2) { animation-delay: .12s; }
+        .wave-bar:nth-child(3) { animation-delay: .24s; }
+        .wave-bar:nth-child(4) { animation-delay: .36s; }
+        .wave-bar:nth-child(5) { animation-delay: .48s; }
 
-        /* .wave-bar {
-    width: 3px;
-    background: white;
-    margin: 0 2px;
-    border-radius: 2px;
-    animation: wave 1s ease-in-out infinite;
-} */
+        /* ── Tab nav ────────────────────────────────────── */
+        .tab-btn {
+            padding: 8px 18px; border-radius: 12px;
+            font-size: 13px; font-weight: 500;
+            cursor: pointer; border: none;
+            background: transparent; color: #9CA3AF;
+            transition: all 0.15s;
+        }
+        .tab-btn:hover:not(.active) { color: #374151; background: #F9F7F3; }
+        .tab-btn.active { background: #1A1A1A; color: white; }
 
-        .wave-bar:nth-child(2) {
-            animation-delay: .1s;
+        /* ── Mode chips ─────────────────────────────────── */
+        .modeChip {
+            padding: 6px 14px; border-radius: 999px;
+            font-size: 13px; font-weight: 500;
+            cursor: pointer; border: none;
+            background: white; color: #4B5563;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.15s;
+        }
+        .modeChip:hover:not(.active) { background: #F0ECFF; color: #5A48D6; }
+        .modeChip.active {
+            background: #7B6CF6; color: white;
+            box-shadow: 0 0 0 3px #D8C8FF;
         }
 
-        .wave-bar:nth-child(3) {
-            animation-delay: .2s;
+        /* ── Confidence bar ─────────────────────────────── */
+        .conf-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7B6CF6, #A78BFA);
+            border-radius: 999px;
+            transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .wave-bar:nth-child(4) {
-            animation-delay: .3s;
+        /* ── Entity chips ───────────────────────────────── */
+        .ent-chip {
+            display: inline-flex; align-items: center; gap: 3px;
+            padding: 2px 8px; border-radius: 999px;
+            font-size: 11px; font-weight: 500; margin: 2px;
         }
 
-        .wave-bar:nth-child(5) {
-            animation-delay: .4s;
+        /* ── Session timeline ───────────────────────────── */
+        .timeline-item { position: relative; }
+        .timeline-item::before {
+            content: '';
+            position: absolute; left: -25px; top: 18px;
+            width: 10px; height: 10px;
+            background: #7B6CF6; border-radius: 50%;
+            border: 2px solid #F5F1E8;
         }
 
-        .parallax {
-            transition: transform 0.2s ease-out;
+        /* ── Scrollbar ──────────────────────────────────── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D8C8FF; border-radius: 99px; }
+
+        /* ── Misc ───────────────────────────────────────── */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
+        textarea, input, select { font-family: 'Inter', sans-serif; }
+        pre { font-family: 'Courier New', monospace; }
     </style>
 </head>
 
 <body class="bg-[#F5F1E8] text-[#1A1A1A] min-h-screen relative overflow-x-hidden">
 
-    <!-- Decorative Elements -->
-    <div class="absolute top-40 left-10 w-32 h-32 border border-[#7B6CF6] rounded-full opacity-30 animate-pulse"></div>
-    <div class="absolute top-96 right-20 w-24 h-24 border-2 border-[#D8C8FF] rounded-full opacity-40 floating"></div>
-    <div class="absolute bottom-20 left-1/3 w-40 h-40 bg-[#D8C8FF] rounded-full blur-3xl opacity-30 floating"></div>
-
-    <!-- Parallax Floating Graphics -->
-    <div id="blob1" class="absolute top-20 left-10 w-40 h-40 bg-[#D8C8FF] rounded-full blur-3xl opacity-40 parallax">
+    <!-- Background decorations -->
+    <div id="blob1"
+        class="absolute top-16 left-8 w-56 h-56 bg-[#D8C8FF] rounded-full blur-3xl opacity-30 parallax pointer-events-none">
     </div>
     <div id="blob2"
-        class="absolute bottom-40 right-10 w-52 h-52 bg-[#FFB6B6] rounded-full blur-3xl opacity-30 parallax"></div>
-    <div class="absolute top-1/3 right-1/4 w-32 h-32 border-2 border-[#7B6CF6] rounded-full opacity-30 rotating"></div>
+        class="absolute bottom-36 right-8 w-64 h-64 bg-[#FFB6B6] rounded-full blur-3xl opacity-20 parallax pointer-events-none">
+    </div>
+    <div class="absolute top-1/3 right-1/4 w-28 h-28 border-2 border-[#7B6CF6] rounded-full opacity-15 rotating pointer-events-none">
+    </div>
+    <div class="absolute top-56 left-6 w-20 h-20 border border-[#7B6CF6] rounded-full opacity-20 animate-pulse pointer-events-none">
+    </div>
+    <div class="absolute bottom-24 left-1/3 w-32 h-32 bg-[#D8C8FF] rounded-full blur-3xl opacity-20 floating pointer-events-none">
+    </div>
 
-    <!-- DevFlow Brand + Wave Transformation -->
-    <!-- <div class="relative overflow-hidden py-24 text-center"> -->
+    <!-- Main container -->
+    <div class="max-w-7xl mx-auto px-5 py-8 relative z-10">
 
-    <!-- Chaotic Wave -->
-    <!-- <svg viewBox="0 0 1440 120" class="w-full absolute top-0 left-0 opacity-60">
-        <path id="chaosWave"
-              d="M0,60 C150,10 350,110 600,40 C850,-30 1100,120 1440,60"
-              stroke="#7B6CF6"
-              stroke-width="3"
-              fill="none" />
-    </svg> -->
-
-    <!-- Brand Name -->
-    <!-- <h1 class="relative z-10 text-6xl font-serif tracking-tight">
-        DevFlow
-    </h1> -->
-
-    <!-- Calm Wave -->
-    <!-- <svg viewBox="0 0 1440 120" class="w-full mt-6">
-        <path id="calmWave"
-              d="M0,60 C300,60 600,60 900,60 C1200,60 1350,60 1440,60"
-              stroke="#5A48D6"
-              stroke-width="3"
-              fill="none" />
-    </svg>
-
-</div>
- -->
-
-    <div class="max-w-5xl mx-auto px-6 py-20 relative z-10">
-
-        <!-- Hero -->
-        <div class="text-center mb-24 relative">
-            <h1 class="text-6xl font-serif tracking-tight leading-tight relative inline-block">
-                DevFlow<br>
-                <span class="relative z-10">Don’t type, just structure</span>
-                <span class="absolute left-0 right-0 bottom-2 h-4 bg-[#D8C8FF] -z-0 rounded-full"></span>
-            </h1>
-
-            <p class="mt-8 text-lg text-gray-600 max-w-xl mx-auto">
-                DevFlow transforms developer speech into
-                </br>structured LLM-ready intelligence.
-            </p>
-
-            <!-- Mode Selector -->
-            <div class="flex justify-center gap-3 mt-10 flex-wrap">
-                <button class="modeChip active px-4 py-1 rounded-full bg-black text-white text-sm"
-                    data-mode="debug">Debug</button>
-                <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm"
-                    data-mode="feature">Feature</button>
-                <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm"
-                    data-mode="refactor">Refactor</button>
-                <button class="modeChip px-4 py-1 rounded-full bg-white shadow text-sm"
-                    data-mode="architecture">Architecture</button>
+        <!-- ══ HEADER ══════════════════════════════════════════════════════ -->
+        <header class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 mb-8">
+            <div>
+                <h1 class="serif text-5xl tracking-tight">DevFlow</h1>
+                <p class="text-sm text-gray-400 mt-1 font-light">Don't type — just structure</p>
             </div>
-        </div>
+            <nav class="flex items-center gap-1 bg-white rounded-2xl p-1 shadow-sm self-start">
+                <button id="tab-analyze-btn" class="tab-btn active" onclick="switchTab('analyze')">🎙
+                    Analyze</button>
+                <button id="tab-session-btn" class="tab-btn" onclick="switchTab('session')">🧠 Session</button>
+                <button id="tab-macros-btn" class="tab-btn" onclick="switchTab('macros')">⚡ Macros</button>
+            </nav>
+        </header>
 
-        <!-- Recording Card -->
-        <div class="bg-white rounded-3xl shadow-md p-10 mb-16 text-center">
-            <!-- <div class="bg-white rounded-3xl shadow-xl p-16 mb-24 text-center transition hover:shadow-2xl"> -->
+        <!-- ══ TAB: ANALYZE ════════════════════════════════════════════════ -->
+        <div id="tab-analyze">
 
-            <button id="recordBtn"
-                class="w-28 h-28 rounded-full bg-[#7B6CF6] flex items-center justify-center shadow-lg hover:scale-105 transition relative">
+            <!-- Mode selector -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button class="modeChip active" data-mode="auto">✨ Auto</button>
+                <button class="modeChip" data-mode="debug">🐛 Debug</button>
+                <button class="modeChip" data-mode="generate">⚙️ Generate</button>
+                <button class="modeChip" data-mode="refactor">♻️ Refactor</button>
+                <button class="modeChip" data-mode="explain">💡 Explain</button>
+                <button class="modeChip" data-mode="scaffold">🏗 Scaffold</button>
+                <button class="modeChip" data-mode="test">🧪 Test</button>
+                <button class="modeChip" data-mode="document">📄 Document</button>
+            </div>
 
-                <div id="micIcon" class="text-white text-3xl z-10">🎙</div>
+            <!-- Recording card -->
+            <div class="bg-white rounded-3xl shadow-sm p-6 mb-6 flex flex-col sm:flex-row items-center gap-5">
 
-                <!-- Waveform -->
-                <div id="waveform" class="absolute inset-0 flex items-center justify-center hidden z-10">
-                    <div class="flex items-end h-8">
-                        <div class="wave-bar"></div>
-                        <div class="wave-bar"></div>
-                        <div class="wave-bar"></div>
-                        <div class="wave-bar"></div>
-                        <div class="wave-bar"></div>
+                <!-- Mic button -->
+                <button id="recordBtn"
+                    class="flex-shrink-0 w-20 h-20 rounded-full bg-[#7B6CF6] flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform relative">
+                    <span id="micIcon" class="text-white text-2xl z-10 select-none">🎙</span>
+                    <div id="waveform" class="absolute inset-0 items-center justify-center hidden z-10 flex">
+                        <div class="flex items-end h-8 gap-0.5">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                    </div>
+                    <div id="recordGlow"
+                        class="absolute inset-0 bg-white opacity-0 rounded-full transition-opacity duration-300">
+                    </div>
+                </button>
+
+                <!-- Status area -->
+                <div class="flex-1 w-full min-w-0">
+                    <p id="status" class="text-gray-400 text-sm mb-1.5">Click the mic to start recording</p>
+                    <div id="thinking" class="hidden items-center gap-2 text-[#7B6CF6] text-sm mb-1.5 flex">
+                        <span class="w-2 h-2 bg-[#7B6CF6] rounded-full animate-ping inline-block"></span>
+                        DevFlow is processing…
+                    </div>
+                    <div id="macroBadge" class="hidden">
+                        <span
+                            class="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-medium px-3 py-1 rounded-full">
+                            ⚡ Macro: <span id="macroNameDisplay" class="font-semibold"></span>
+                        </span>
                     </div>
                 </div>
 
-                <!-- Glow Layer -->
-                <div id="recordGlow" class="absolute inset-0 bg-white opacity-0 rounded-full transition"></div>
-
-                <!-- <div id="waveform" class="absolute flex items-end justify-center hidden">
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-            </div> -->
-            </button>
-
-            <div id="status" class="mt-6 text-gray-500 text-sm"></div>
-            <div id="thinking" class="hidden mt-4 text-[#7B6CF6] text-sm flex items-center gap-2">
-                <span class="w-2 h-2 bg-[#7B6CF6] rounded-full animate-ping"></span>
-                DevFlow is thinking…
+                <!-- Session indicator -->
+                <div class="text-right text-xs flex-shrink-0 hidden sm:block">
+                    <div class="text-gray-400 font-medium mb-0.5">Session</div>
+                    <div id="sessionDisplay" class="font-mono text-gray-500 text-[10px]">–</div>
+                    <div id="sessionCount" class="text-[#7B6CF6] font-semibold mt-1">0 entries</div>
+                </div>
             </div>
-            <!-- <div id="thinking" class="hidden mt-4 text-[#7B6CF6] pulsing text-sm">
-            DevFlow is thinking…
-        </div> -->
-        </div>
 
-        <!-- Output Section -->
-        <div class="grid md:grid-cols-2 gap-12">
+            <!-- 3-column output grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-            <!-- Transcript -->
-            <div>
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="font-semibold text-lg">Transcript</h2>
-                    <button id="commitBtn" class="hidden bg-black text-white text-sm px-4 py-1 rounded-full">
-                        Commit changes
+                <!-- Col 1: Transcript -->
+                <div class="bg-white rounded-2xl shadow-sm p-5 flex flex-col">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="font-semibold text-sm">Transcript</h2>
+                        <button id="commitBtn"
+                            class="hidden text-xs bg-[#1A1A1A] text-white px-3 py-1.5 rounded-full hover:bg-gray-700 transition font-medium">
+                            Commit ↵
+                        </button>
+                    </div>
+                    <textarea id="transcript" rows="10"
+                        class="flex-1 bg-[#FAFAFA] rounded-xl p-4 text-sm resize-none outline-none focus:ring-2 focus:ring-[#7B6CF6] leading-relaxed"
+                        placeholder="Your transcript will appear here…"></textarea>
+                    <button id="exportBtn"
+                        class="mt-3 py-2 w-full bg-[#F5F1E8] hover:bg-[#EDE8DC] text-sm font-medium rounded-xl transition">
+                        ↓ Export JSON
                     </button>
                 </div>
 
-                <textarea id="transcript"
-                    class="w-full h-72 bg-white rounded-2xl p-5 shadow-sm resize-none outline-none focus:ring-2 focus:ring-[#7B6CF6]"
-                    placeholder="Your transcript will appear here..."></textarea>
-            </div>
+                <!-- Col 2: Local NLP -->
+                <div class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4">
+                    <h2 class="font-semibold text-sm">Local NLP</h2>
 
-            <!-- Structured Output -->
-            <div>
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="font-semibold text-lg">Structured JSON</h2>
-                    <div id="clarityScore"
-                        class="px-4 py-1 bg-[#E8E3FF] text-[#5A48D6] rounded-full text-sm font-medium">
-                        Clarity: --
+                    <!-- SVC Intent -->
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">LinearSVC Intent
+                        </p>
+                        <div id="svcBadge"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-gray-100 text-gray-400 transition-all duration-300">
+                            <span id="svcDot" class="w-2 h-2 rounded-full bg-gray-300 flex-shrink-0"></span>
+                            <span id="svcLabel">Awaiting input</span>
+                        </div>
+                        <!-- Confidence -->
+                        <div class="mt-3">
+                            <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+                                <span>Confidence</span>
+                                <span id="svcConf">—</span>
+                            </div>
+                            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div id="svcConfBar" class="conf-fill" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SpaCy Entities -->
+                    <div class="flex-1">
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">SpaCy Entities
+                        </p>
+                        <div id="entitiesWrap" class="min-h-[90px] max-h-48 overflow-y-auto">
+                            <p id="entEmpty" class="text-xs text-gray-300 italic">No entities detected yet</p>
+                            <div id="entChips" class="flex flex-wrap"></div>
+                        </div>
+                    </div>
+
+                    <!-- Intent comparison (shown after first result) -->
+                    <div id="intentCompare" class="hidden pt-4 border-t border-gray-100">
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Model Comparison
+                        </p>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-400">SVC (local)</span>
+                                <span id="cmpSvc" class="font-semibold text-gray-700">—</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-400">GPT (LLM)</span>
+                                <span id="cmpGpt" class="font-semibold text-[#7B6CF6]">—</span>
+                            </div>
+                            <div id="cmpMatch"
+                                class="text-[10px] text-center font-semibold py-1 rounded-full mt-1 bg-gray-100 text-gray-400">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div
-                    class="bg-white rounded-2xl p-5 shadow-sm h-72 overflow-y-auto transition hover:shadow-xl hover:-translate-y-1">
-                    <pre id="structured" class="text-sm whitespace-pre-wrap"></pre>
+                <!-- Col 3: GPT Output -->
+                <div class="bg-white rounded-2xl shadow-sm p-5 flex flex-col">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="font-semibold text-sm">GPT-4.1 Structure</h2>
+                        <div id="clarityScore"
+                            class="text-xs font-semibold px-3 py-1 rounded-full bg-[#E8E3FF] text-[#5A48D6]">
+                            Clarity —
+                        </div>
+                    </div>
+                    <div class="flex-1 bg-[#FAFAFA] rounded-xl p-4 overflow-y-auto max-h-64">
+                        <pre id="structured" class="text-xs whitespace-pre-wrap leading-relaxed text-gray-700"></pre>
+                    </div>
+                    <div id="suggestionsPanel"
+                        class="hidden mt-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-amber-700 mb-2">Clarity Gaps
+                        </p>
+                        <ul id="suggestionsList" class="list-disc pl-4 space-y-1 text-xs text-amber-800"></ul>
+                    </div>
                 </div>
 
-                <button id="exportBtn" class="mt-4 px-4 py-2 bg-black text-white rounded-full text-sm">
-                    Export JSON
-                </button>
-
-                <!-- Suggestions -->
-                <div id="suggestionsPanel" class="hidden mt-6 bg-[#FFF3CD] border border-[#FFE69C] text-[#856404]
-                        rounded-2xl p-5">
-                    <h3 class="font-semibold mb-3">Smart Suggestions</h3>
-                    <ul id="suggestionsList" class="list-disc pl-5 space-y-2 text-sm"></ul>
-                </div>
             </div>
-
         </div>
 
-    </div>
+        <!-- ══ TAB: SESSION ════════════════════════════════════════════════ -->
+        <div id="tab-session" class="hidden">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="serif text-4xl mb-1">Session Memory</h2>
+                    <p class="text-sm text-gray-400">The last 3 entries are sent to GPT as context — new queries are
+                        treated as continuations, not standalone requests.</p>
+                </div>
+                <div class="flex gap-2 flex-shrink-0">
+                    <button onclick="exportSession()"
+                        class="px-4 py-2 text-sm bg-white shadow-sm rounded-xl hover:shadow-md transition font-medium">
+                        Export
+                    </button>
+                    <button id="clearSessionBtn"
+                        class="px-4 py-2 text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl hover:bg-red-100 transition font-medium">
+                        Clear Session
+                    </button>
+                </div>
+            </div>
+            <!-- Timeline -->
+            <div id="sessionTimeline" class="ml-6 border-l-2 border-[#D8C8FF] pl-6 space-y-4">
+                <p id="sessionEmpty" class="text-gray-400 text-sm italic -ml-6">No entries yet. Record something on the
+                    Analyze tab.</p>
+            </div>
+        </div>
+
+        <!-- ══ TAB: MACROS ════════════════════════════════════════════════ -->
+        <div id="tab-macros" class="hidden">
+            <div class="grid md:grid-cols-2 gap-8">
+
+                <!-- Add form -->
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 class="serif text-3xl mb-5">New Macro</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Name</label>
+                            <input id="mName" type="text" placeholder="e.g. api-design"
+                                class="w-full bg-[#FAFAFA] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#7B6CF6]">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Trigger
+                                Keywords <span class="normal-case text-gray-300">(comma-separated)</span></label>
+                            <input id="mKeywords" type="text" placeholder="api, endpoint, route"
+                                class="w-full bg-[#FAFAFA] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#7B6CF6]">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Command
+                                to Append</label>
+                            <textarea id="mCommand" rows="5"
+                                placeholder="This is a FastAPI REST project. Always consider rate limiting, versioning, and auth in your analysis."
+                                class="w-full bg-[#FAFAFA] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#7B6CF6] resize-none"></textarea>
+                            <p class="text-[10px] text-gray-400 mt-1">This text is appended to your transcript before GPT
+                                structures it.</p>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Default
+                                Mode</label>
+                            <select id="mMode"
+                                class="w-full bg-[#FAFAFA] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#7B6CF6] cursor-pointer">
+                                <option value="auto">✨ Auto</option>
+                                <option value="debug">🐛 Debug</option>
+                                <option value="generate">⚙️ Generate</option>
+                                <option value="refactor">♻️ Refactor</option>
+                                <option value="explain">💡 Explain</option>
+                                <option value="scaffold">🏗 Scaffold</option>
+                                <option value="test">🧪 Test</option>
+                                <option value="document">📄 Document</option>
+                            </select>
+                        </div>
+                        <button onclick="saveMacro()"
+                            class="w-full py-3 bg-[#7B6CF6] text-white rounded-xl text-sm font-semibold hover:bg-[#6A5BE0] active:scale-[0.99] transition">
+                            Save Macro
+                        </button>
+                        <p id="macroMsg" class="text-xs text-center text-gray-400 min-h-[18px]"></p>
+                    </div>
+                </div>
+
+                <!-- Active macros -->
+                <div>
+                    <h2 class="serif text-3xl mb-5">Active Macros</h2>
+                    <div id="macrosList" class="space-y-3">
+                        <p id="macrosEmpty" class="text-sm text-gray-400 italic">No macros defined yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main -->
 
     <script>
-        let mediaRecorder;
+        'use strict';
+
+        /* ══════════════════════════════════════════════════
+           SESSION ID (persisted across page loads)
+        ══════════════════════════════════════════════════ */
+        const SESSION_ID = (() => {
+            let id = localStorage.getItem('devflow_sid');
+            if (!id) { id = crypto.randomUUID(); localStorage.setItem('devflow_sid', id); }
+            return id;
+        })();
+        document.getElementById('sessionDisplay').textContent = SESSION_ID.slice(0, 8) + '…';
+
+        /* ══════════════════════════════════════════════════
+           STATE
+        ══════════════════════════════════════════════════ */
+        let mediaRecorder = null;
         let audioChunks = [];
-        let originalTranscript = "";
-        let currentMode = "debug";
+        let origTranscript = '';
+        let currentMode = 'auto';
+        let entryCount = 0;
 
-        const recordBtn = document.getElementById("recordBtn");
-        const transcriptArea = document.getElementById("transcript");
-        const commitBtn = document.getElementById("commitBtn");
-        const statusDiv = document.getElementById("status");
-        const waveform = document.getElementById("waveform");
-        const micIcon = document.getElementById("micIcon");
-        const thinking = document.getElementById("thinking");
+        const $ = id => document.getElementById(id);
+        const recordBtn = $('recordBtn');
+        const transcriptEl = $('transcript');
+        const commitBtn = $('commitBtn');
+        const statusEl = $('status');
+        const thinkingEl = $('thinking');
 
-        /* ======================
-           MODE SELECTOR
-        ====================== */
-        document.querySelectorAll(".modeChip").forEach(btn => {
-            btn.onclick = function () {
-                document.querySelectorAll(".modeChip").forEach(b => {
-                    b.classList.remove("bg-black", "text-white", "active");
-                    b.classList.add("bg-white", "shadow");
-                });
-                this.classList.add("bg-black", "text-white", "active");
-                this.classList.remove("bg-white", "shadow");
-                currentMode = this.dataset.mode;
-            };
+        /* ══════════════════════════════════════════════════
+           TAB SWITCHING
+        ══════════════════════════════════════════════════ */
+        function switchTab(name) {
+            ['analyze', 'session', 'macros'].forEach(t => {
+                $('tab-' + t).classList.add('hidden');
+                $('tab-' + t + '-btn').classList.remove('active');
+            });
+            $('tab-' + name).classList.remove('hidden');
+            $('tab-' + name + '-btn').classList.add('active');
+            if (name === 'session') loadSessionTab();
+            if (name === 'macros') loadMacrosTab();
+        }
+
+        /* ══════════════════════════════════════════════════
+           MODE CHIPS
+        ══════════════════════════════════════════════════ */
+        document.querySelectorAll('.modeChip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.modeChip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+            });
         });
 
-        /* ======================
+        /* ══════════════════════════════════════════════════
            RECORDING
-        ====================== */
-        recordBtn.onclick = async () => {
-
-            if (!mediaRecorder || mediaRecorder.state === "inactive") {
-
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        ══════════════════════════════════════════════════ */
+        recordBtn.addEventListener('click', async () => {
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                let stream;
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                } catch (e) {
+                    statusEl.textContent = '⚠ Microphone access denied.';
+                    return;
+                }
                 mediaRecorder = new MediaRecorder(stream);
-
                 mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-
-                mediaRecorder.onstop = async () => {
-
-                    // STOP RECORDING VISUALS
-                    waveform.classList.add("hidden");
-                    micIcon.classList.remove("hidden");
-                    document.getElementById("recordGlow").style.opacity = "0";
-
-                    statusDiv.innerText = "Processing…";
-
-                    const blob = new Blob(audioChunks, { type: "audio/wav" });
-                    audioChunks = [];
-
-                    const formData = new FormData();
-                    formData.append("file", blob, "recording.wav");
-                    formData.append("mode", currentMode);
-
-                    thinking.classList.remove("hidden");
-
-                    const res = await fetch("/process", { method: "POST", body: formData });
-                    const result = await res.json();
-
-                    thinking.classList.add("hidden");
-
-                    transcriptArea.value = result.transcript;
-                    originalTranscript = result.transcript;
-                    commitBtn.classList.add("hidden");
-
-                    updateStructured(result.structured_output);
-
-                    statusDiv.innerText = "Done.";
-                };
-
+                mediaRecorder.onstop = handleRecordingStop;
                 mediaRecorder.start();
-
-                // START RECORDING VISUALS
-                micIcon.classList.add("hidden");
-                waveform.classList.remove("hidden");
-                document.getElementById("recordGlow").style.opacity = "0.2";
-
-                statusDiv.innerText = "Recording…";
-
+                setRecordViz(true);
+                statusEl.textContent = 'Recording…';
             } else {
                 mediaRecorder.stop();
             }
-        };
-
-        /* ======================
-           COMMIT CHANGES
-        ====================== */
-        transcriptArea.addEventListener("input", () => {
-            if (transcriptArea.value !== originalTranscript)
-                commitBtn.classList.remove("hidden");
-            else
-                commitBtn.classList.add("hidden");
         });
 
-        commitBtn.onclick = async () => {
+        async function handleRecordingStop() {
+            setRecordViz(false);
+            statusEl.textContent = 'Processing…';
+            thinkingEl.classList.remove('hidden');
 
-            thinking.classList.remove("hidden");
+            const blob = new Blob(audioChunks, { type: 'audio/wav' });
+            audioChunks = [];
 
-            const res = await fetch("/structure", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ transcript: transcriptArea.value, mode: currentMode })
-            });
+            const form = new FormData();
+            form.append('file', blob, 'recording.wav');
+            form.append('mode', currentMode);
+            form.append('session_id', SESSION_ID);
 
-            const result = await res.json();
-            thinking.classList.add("hidden");
-
-            originalTranscript = transcriptArea.value;
-            commitBtn.classList.add("hidden");
-
-            updateStructured(result);
-        };
-
-        /* ======================
-           UPDATE STRUCTURED DATA
-        ====================== */
-        function updateStructured(data) {
-            if (data.structured_output) {
-                data = data.structured_output;
+            try {
+                const res = await fetch('/process', { method: 'POST', body: form });
+                if (!res.ok) { const e = await res.json(); throw new Error(e.detail); }
+                applyResult(await res.json());
+                statusEl.textContent = 'Done.';
+            } catch (err) {
+                statusEl.textContent = '⚠ ' + err.message;
+            } finally {
+                thinkingEl.classList.add('hidden');
             }
-            document.getElementById("structured").innerText =
-                JSON.stringify(data, null, 2);
-
-            const gaps = data.clarity_gaps_detected?.length || 0;
-            const score = Math.max(0, 100 - gaps * 15);
-            document.getElementById("clarityScore").innerText = "Clarity: " + score + "%";
-
-            const panel = document.getElementById("suggestionsPanel");
-            const list = document.getElementById("suggestionsList");
-            list.innerHTML = "";
-
-            if (gaps > 0) {
-                panel.classList.remove("hidden");
-                data.clarity_gaps_detected.forEach(g => {
-                    const li = document.createElement("li");
-                    li.innerText = g;
-                    list.appendChild(li);
-                });
-            } else panel.classList.add("hidden");
         }
 
-        /* ======================
-           EXPORT
-        ====================== */
-        document.getElementById("exportBtn").onclick = function () {
-            const jsonText = document.getElementById("structured").innerText;
-            const blob = new Blob([jsonText], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "devflow-output.json";
-            a.click();
-            URL.revokeObjectURL(url);
+        function setRecordViz(on) {
+            if (on) {
+                $('micIcon').classList.add('hidden');
+                $('waveform').classList.remove('hidden');
+                $('recordGlow').style.opacity = '0.25';
+            } else {
+                $('waveform').classList.add('hidden');
+                $('micIcon').classList.remove('hidden');
+                $('recordGlow').style.opacity = '0';
+            }
+        }
+
+        /* ══════════════════════════════════════════════════
+           COMMIT EDITS
+        ══════════════════════════════════════════════════ */
+        transcriptEl.addEventListener('input', () => {
+            commitBtn.classList.toggle('hidden', transcriptEl.value === origTranscript);
+        });
+
+        commitBtn.addEventListener('click', async () => {
+            thinkingEl.classList.remove('hidden');
+            commitBtn.disabled = true;
+            try {
+                const res = await fetch('/structure', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ transcript: transcriptEl.value, mode: currentMode, session_id: SESSION_ID })
+                });
+                if (!res.ok) { const e = await res.json(); throw new Error(e.detail); }
+                origTranscript = transcriptEl.value;
+                commitBtn.classList.add('hidden');
+                applyResult(await res.json());
+            } catch (err) {
+                statusEl.textContent = '⚠ ' + err.message;
+            } finally {
+                thinkingEl.classList.add('hidden');
+                commitBtn.disabled = false;
+            }
+        });
+
+        /* ══════════════════════════════════════════════════
+           APPLY FULL RESULT
+        ══════════════════════════════════════════════════ */
+        function applyResult(r) {
+            if (r.transcript) {
+                transcriptEl.value = r.transcript;
+                origTranscript = r.transcript;
+                commitBtn.classList.add('hidden');
+            }
+            if (r.macro_triggered) {
+                $('macroNameDisplay').textContent = r.macro_triggered;
+                $('macroBadge').classList.remove('hidden');
+            } else {
+                $('macroBadge').classList.add('hidden');
+            }
+            if (r.nlp_result) renderNLP(r.nlp_result);
+            if (r.gpt_result) renderGPT(r.gpt_result);
+            if (r.nlp_result && r.gpt_result) renderCompare(r.nlp_result, r.gpt_result);
+
+            entryCount++;
+            $('sessionCount').textContent = entryCount + (entryCount === 1 ? ' entry' : ' entries');
+        }
+
+        /* ══════════════════════════════════════════════════
+           NLP PANEL
+        ══════════════════════════════════════════════════ */
+        const INTENT_STYLE = {
+            debug:    { bg: '#FEE2E2', fg: '#991B1B', dot: '#EF4444' },
+            generate: { bg: '#DCFCE7', fg: '#166534', dot: '#22C55E' },
+            refactor: { bg: '#DBEAFE', fg: '#1E40AF', dot: '#3B82F6' },
+            explain:  { bg: '#FEF3C7', fg: '#92400E', dot: '#F59E0B' },
+            scaffold: { bg: '#CCFBF1', fg: '#134E4A', dot: '#14B8A6' },
+            test:     { bg: '#EDE9FE', fg: '#4C1D95', dot: '#8B5CF6' },
+            document: { bg: '#FFF7ED', fg: '#7C2D12', dot: '#EA580C' },
+        };
+        const ENT_COLOR = {
+            ERROR: '#FEE2E2', FRAMEWORK: '#DBEAFE', LANG: '#DCFCE7', LANGUAGE: '#DCFCE7',
+            ORG: '#F3F4F6', PERSON: '#FEF9C3', PRODUCT: '#EDE9FE', GPE: '#CCFBF1',
+            DATE: '#FFF7ED', CARDINAL: '#F3F4F6', TIME: '#FFF7ED', default: '#F0F0F0',
         };
 
-        /* ======================
-           PARALLAX
-        ====================== */
-        window.addEventListener("scroll", () => {
-            const offset = window.scrollY * 0.2;
-            document.getElementById("blob1").style.transform =
-                "translateY(" + offset + "px)";
-            document.getElementById("blob2").style.transform =
-                "translateY(" + (-offset) + "px)";
+        function renderNLP(nlp) {
+            const style = INTENT_STYLE[nlp.svc_intent] || { bg: '#F3F4F6', fg: '#374151', dot: '#9CA3AF' };
+            const badge = $('svcBadge');
+            badge.style.background = style.bg;
+            badge.style.color = style.fg;
+            $('svcDot').style.background = style.dot;
+            $('svcLabel').textContent = nlp.svc_intent;
+
+            const conf = Math.min(nlp.svc_confidence || 0, 100);
+            $('svcConf').textContent = conf.toFixed(1) + '%';
+            $('svcConfBar').style.width = conf + '%';
+
+            const chipsEl = $('entChips');
+            const emptyEl = $('entEmpty');
+            chipsEl.innerHTML = '';
+            if (nlp.ner_entities?.length > 0) {
+                emptyEl.classList.add('hidden');
+                nlp.ner_entities.forEach(e => {
+                    const chip = document.createElement('span');
+                    chip.className = 'ent-chip';
+                    chip.style.background = ENT_COLOR[e.label] || ENT_COLOR.default;
+                    chip.style.color = '#374151';
+                    chip.innerHTML = `<b>${e.text}</b><span style="opacity:.4;font-size:10px">${e.label}</span>`;
+                    chipsEl.appendChild(chip);
+                });
+            } else {
+                emptyEl.classList.remove('hidden');
+            }
+        }
+
+        function renderCompare(nlp, gpt) {
+            const svcIntent = nlp.svc_intent || '—';
+            const gptIntent = (gpt.intent || gpt.mode_identified || '—').toLowerCase().split(/[\s,]/)[0];
+            $('cmpSvc').textContent = svcIntent;
+            $('cmpGpt').textContent = gpt.intent || gpt.mode_identified || '—';
+
+            const match = svcIntent.toLowerCase() === gptIntent;
+            const m = $('cmpMatch');
+            if (match) {
+                m.textContent = '✓ Models agree';
+                m.className = 'text-[10px] text-center font-semibold py-1 rounded-full mt-1 bg-green-50 text-green-700';
+            } else {
+                m.textContent = '≠ Models differ';
+                m.className = 'text-[10px] text-center font-semibold py-1 rounded-full mt-1 bg-amber-50 text-amber-700';
+            }
+            $('intentCompare').classList.remove('hidden');
+        }
+
+        /* ══════════════════════════════════════════════════
+           GPT PANEL
+        ══════════════════════════════════════════════════ */
+        function renderGPT(data) {
+            $('structured').textContent = JSON.stringify(data, null, 2);
+            const gaps = data.clarity_gaps_detected?.length || 0;
+            const score = Math.max(0, 100 - gaps * 15);
+            $('clarityScore').textContent = 'Clarity ' + score + '%';
+
+            const panel = $('suggestionsPanel');
+            const list = $('suggestionsList');
+            list.innerHTML = '';
+            if (gaps > 0) {
+                panel.classList.remove('hidden');
+                data.clarity_gaps_detected.forEach(g => {
+                    const li = document.createElement('li');
+                    li.textContent = g;
+                    list.appendChild(li);
+                });
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        /* ══════════════════════════════════════════════════
+           EXPORT JSON
+        ══════════════════════════════════════════════════ */
+        $('exportBtn').addEventListener('click', () => {
+            const text = $('structured').textContent;
+            if (!text.trim()) { statusEl.textContent = 'Nothing to export yet.'; return; }
+            const a = Object.assign(document.createElement('a'), {
+                href: URL.createObjectURL(new Blob([text], { type: 'application/json' })),
+                download: 'devflow-output.json'
+            });
+            a.click(); URL.revokeObjectURL(a.href);
         });
+
+        /* ══════════════════════════════════════════════════
+           SESSION TAB
+        ══════════════════════════════════════════════════ */
+        async function loadSessionTab() {
+            const res = await fetch('/session/' + SESSION_ID);
+            const { history } = await res.json();
+            entryCount = history.length;
+            $('sessionCount').textContent = entryCount + (entryCount === 1 ? ' entry' : ' entries');
+            renderTimeline(history);
+        }
+
+        function renderTimeline(history) {
+            const tl = $('sessionTimeline');
+            const empty = $('sessionEmpty');
+            tl.innerHTML = '';
+            tl.appendChild(empty);
+
+            if (!history.length) { empty.classList.remove('hidden'); return; }
+            empty.classList.add('hidden');
+
+            [...history].reverse().forEach(entry => {
+                const ts = new Date(entry.timestamp).toLocaleTimeString();
+                const sStyle = INTENT_STYLE[entry.nlp_result?.svc_intent] || { bg: '#F3F4F6', fg: '#6B7280' };
+                const ents = entry.nlp_result?.ner_entities?.slice(0, 5) || [];
+                const extra = (entry.nlp_result?.ner_entities?.length || 0) - 5;
+
+                const card = document.createElement('div');
+                card.className = 'timeline-item bg-white rounded-2xl p-5 shadow-sm';
+                card.innerHTML = `
+                    <div class="flex flex-wrap gap-1.5 items-center mb-3">
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                            style="background:${sStyle.bg};color:${sStyle.fg}">
+                            SVC: ${entry.nlp_result?.svc_intent || '—'}
+                        </span>
+                        <span class="text-[11px] font-semibold bg-[#EDE9FE] text-[#5A48D6] px-2 py-0.5 rounded-full">
+                            GPT: ${entry.gpt_result?.intent || '—'}
+                        </span>
+                        <span class="text-[11px] bg-[#F5F1E8] text-gray-500 px-2 py-0.5 rounded-full">${entry.mode}</span>
+                        ${entry.macro_triggered ? `<span class="text-[11px] bg-amber-50 border border-amber-200 text-amber-700 px-2 py-0.5 rounded-full">⚡ ${entry.macro_triggered}</span>` : ''}
+                        <span class="ml-auto text-[11px] text-gray-400 flex-shrink-0">${ts}</span>
+                    </div>
+                    <p class="text-sm text-gray-700 line-clamp-2">${entry.transcript}</p>
+                    ${ents.length ? `
+                    <div class="mt-2 flex flex-wrap gap-1">
+                        ${ents.map(e => `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">${e.text} <span class="opacity-40">${e.label}</span></span>`).join('')}
+                        ${extra > 0 ? `<span class="text-[10px] text-gray-400">+${extra} more</span>` : ''}
+                    </div>` : ''}
+                `;
+                tl.appendChild(card);
+            });
+        }
+
+        $('clearSessionBtn').addEventListener('click', async () => {
+            if (!confirm('Clear this session? All context will be lost.')) return;
+            await fetch('/session/' + SESSION_ID, { method: 'DELETE' });
+            localStorage.removeItem('devflow_sid');
+            location.reload();
+        });
+
+        async function exportSession() {
+            const res = await fetch('/session/' + SESSION_ID);
+            const data = await res.json();
+            const a = Object.assign(document.createElement('a'), {
+                href: URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })),
+                download: 'devflow-session.json'
+            });
+            a.click(); URL.revokeObjectURL(a.href);
+        }
+
+        /* ══════════════════════════════════════════════════
+           MACROS TAB
+        ══════════════════════════════════════════════════ */
+        async function loadMacrosTab() {
+            const res = await fetch('/macros');
+            renderMacros(await res.json());
+        }
+
+        function renderMacros(macrosObj) {
+            const list = $('macrosList');
+            const empty = $('macrosEmpty');
+            list.innerHTML = '';
+            list.appendChild(empty);
+
+            const entries = Object.entries(macrosObj);
+            if (!entries.length) { empty.classList.remove('hidden'); return; }
+            empty.classList.add('hidden');
+
+            entries.forEach(([name, m]) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl p-4 shadow-sm';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="font-semibold text-sm">⚡ ${name}</span>
+                                <span class="text-[10px] bg-[#F5F1E8] text-gray-500 px-2 py-0.5 rounded-full">${m.mode}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-1">
+                                <span class="font-semibold text-gray-500">Keywords:</span> ${m.keywords.join(', ')}
+                            </p>
+                            <p class="text-xs text-gray-500 truncate" title="${m.command}">
+                                <span class="font-semibold text-gray-500">Command:</span>
+                                ${m.command.length > 90 ? m.command.slice(0, 90) + '…' : m.command}
+                            </p>
+                        </div>
+                        <button onclick="deleteMacro('${name.replace(/'/g, "\\'")}')"
+                            class="flex-shrink-0 text-xs text-red-400 hover:text-red-600 px-2 py-1 rounded-lg hover:bg-red-50 transition">
+                            Delete
+                        </button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        async function saveMacro() {
+            const name = $('mName').value.trim();
+            const kws = $('mKeywords').value.split(',').map(k => k.trim()).filter(Boolean);
+            const cmd = $('mCommand').value.trim();
+            const mode = $('mMode').value;
+            const msg = $('macroMsg');
+
+            if (!name || !kws.length || !cmd) {
+                msg.textContent = '⚠ Name, keywords, and command are all required.';
+                msg.style.color = '#EF4444';
+                return;
+            }
+            const res = await fetch('/macros', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, keywords: kws, command: cmd, mode })
+            });
+            if (res.ok) {
+                msg.textContent = '✓ Macro saved!';
+                msg.style.color = '#16A34A';
+                ['mName', 'mKeywords', 'mCommand'].forEach(id => $(id).value = '');
+                setTimeout(() => msg.textContent = '', 2500);
+                loadMacrosTab();
+            }
+        }
+
+        async function deleteMacro(name) {
+            await fetch('/macros/' + encodeURIComponent(name), { method: 'DELETE' });
+            loadMacrosTab();
+        }
+
+        /* ══════════════════════════════════════════════════
+           PARALLAX
+        ══════════════════════════════════════════════════ */
+        window.addEventListener('scroll', () => {
+            const off = window.scrollY * 0.15;
+            $('blob1').style.transform = `translateY(${off}px)`;
+            $('blob2').style.transform = `translateY(${-off}px)`;
+        }, { passive: true });
     </script>
 
 </body>

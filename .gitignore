@@ -4,10 +4,15 @@ __pycache__/
 *.so
 *.pyc
 
+data/
+sessions.json
+macros.json
+
 # devflow_artefacts/
 devflow_artefacts/distilbert
 devflow_artefacts/spacy_ner
-
+implementation_plan.md
+walkthrough.md
 
 # mp3 files
 sample_mp3/
