@@ -13,62 +13,135 @@
         href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; }
-        .serif { font-family: 'Instrument Serif', serif; }
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .serif {
+            font-family: 'Instrument Serif', serif;
+        }
 
         /* ── Animations ─────────────────────────────────── */
         @keyframes floatSlow {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        @keyframes rotateSlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes wave {
-            0%, 100% { height: 5px; }
-            50% { height: 22px; }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
         }
 
-        .floating { animation: floatSlow 10s ease-in-out infinite; }
-        .rotating { animation: rotateSlow 65s linear infinite; }
-        .parallax { transition: transform 0.15s ease-out; }
+        @keyframes rotateSlow {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                height: 5px;
+            }
+
+            50% {
+                height: 22px;
+            }
+        }
+
+        .floating {
+            animation: floatSlow 10s ease-in-out infinite;
+        }
+
+        .rotating {
+            animation: rotateSlow 65s linear infinite;
+        }
+
+        .parallax {
+            transition: transform 0.15s ease-out;
+        }
 
         .wave-bar {
-            width: 4px; height: 8px;
-            background: white; margin: 0 2px;
+            width: 4px;
+            height: 8px;
+            background: white;
+            margin: 0 2px;
             border-radius: 2px;
             animation: wave 1s ease-in-out infinite;
         }
-        .wave-bar:nth-child(2) { animation-delay: .12s; }
-        .wave-bar:nth-child(3) { animation-delay: .24s; }
-        .wave-bar:nth-child(4) { animation-delay: .36s; }
-        .wave-bar:nth-child(5) { animation-delay: .48s; }
+
+        .wave-bar:nth-child(2) {
+            animation-delay: .12s;
+        }
+
+        .wave-bar:nth-child(3) {
+            animation-delay: .24s;
+        }
+
+        .wave-bar:nth-child(4) {
+            animation-delay: .36s;
+        }
+
+        .wave-bar:nth-child(5) {
+            animation-delay: .48s;
+        }
 
         /* ── Tab nav ────────────────────────────────────── */
         .tab-btn {
-            padding: 8px 18px; border-radius: 12px;
-            font-size: 13px; font-weight: 500;
-            cursor: pointer; border: none;
-            background: transparent; color: #9CA3AF;
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: #9CA3AF;
             transition: all 0.15s;
         }
-        .tab-btn:hover:not(.active) { color: #374151; background: #F9F7F3; }
-        .tab-btn.active { background: #1A1A1A; color: white; }
+
+        .tab-btn:hover:not(.active) {
+            color: #374151;
+            background: #F9F7F3;
+        }
+
+        .tab-btn.active {
+            background: #1A1A1A;
+            color: white;
+        }
 
         /* ── Mode chips ─────────────────────────────────── */
         .modeChip {
-            padding: 6px 14px; border-radius: 999px;
-            font-size: 13px; font-weight: 500;
-            cursor: pointer; border: none;
-            background: white; color: #4B5563;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: white;
+            color: #4B5563;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: all 0.15s;
         }
-        .modeChip:hover:not(.active) { background: #F0ECFF; color: #5A48D6; }
+
+        .modeChip:hover:not(.active) {
+            background: #F0ECFF;
+            color: #5A48D6;
+        }
+
         .modeChip.active {
-            background: #7B6CF6; color: white;
+            background: #7B6CF6;
+            color: white;
             box-shadow: 0 0 0 3px #D8C8FF;
         }
 
@@ -80,27 +153,146 @@
             transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ── Entity chips ───────────────────────────────── */
-        .ent-chip {
-            display: inline-flex; align-items: center; gap: 3px;
-            padding: 2px 8px; border-radius: 999px;
-            font-size: 11px; font-weight: 500; margin: 2px;
+        /* ── Intent rows ────────────────────────────────── */
+        .intent-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .intent-row .ir-label {
+            width: 72px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: right;
+            color: #6B7280;
+            flex-shrink: 0;
+        }
+
+        .intent-row .ir-bar-wrap {
+            flex: 1;
+            height: 6px;
+            background: #F3F4F6;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .intent-row .ir-bar {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #7B6CF6, #A78BFA);
+            transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .intent-row.ir-top .ir-label {
+            color: #5A48D6;
+        }
+
+        .intent-row.ir-top .ir-bar {
+            background: linear-gradient(90deg, #5A48D6, #7B6CF6);
+        }
+
+        .intent-row .ir-pct {
+            width: 40px;
+            font-size: 11px;
+            color: #9CA3AF;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .intent-row.ir-top .ir-pct {
+            color: #5A48D6;
+            font-weight: 700;
+        }
+
+        /* ── Analysis card ──────────────────────────────── */
+        .analysis-card {
+            background: #FAFAFA;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 11.5px;
+        }
+
+        .ac-row {
+            display: flex;
+            gap: 6px;
+            padding: 4px 0;
+            border-bottom: 1px solid #F0ECFF;
+        }
+
+        .ac-row:last-child {
+            border-bottom: none;
+        }
+
+        .ac-key {
+            color: #7B6CF6;
+            font-weight: 600;
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+
+        .ac-val {
+            color: #374151;
+            word-break: break-word;
+        }
+
+        .ac-val.null-val {
+            color: #D1D5DB;
+            font-style: italic;
+        }
+
+        .low-conf-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 999px;
+            vertical-align: middle;
+        }
+
+        .low-conf-badge.low {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .low-conf-badge.ok {
+            background: #DCFCE7;
+            color: #166534;
         }
 
         /* ── Session timeline ───────────────────────────── */
-        .timeline-item { position: relative; }
+        .timeline-item {
+            position: relative;
+        }
+
         .timeline-item::before {
             content: '';
-            position: absolute; left: -25px; top: 18px;
-            width: 10px; height: 10px;
-            background: #7B6CF6; border-radius: 50%;
+            position: absolute;
+            left: -25px;
+            top: 18px;
+            width: 10px;
+            height: 10px;
+            background: #7B6CF6;
+            border-radius: 50%;
             border: 2px solid #F5F1E8;
         }
 
         /* ── Scrollbar ──────────────────────────────────── */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #D8C8FF; border-radius: 99px; }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #D8C8FF;
+            border-radius: 99px;
+        }
 
         /* ── Misc ───────────────────────────────────────── */
         .line-clamp-2 {
@@ -109,8 +301,16 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        textarea, input, select { font-family: 'Inter', sans-serif; }
-        pre { font-family: 'Courier New', monospace; }
+
+        textarea,
+        input,
+        select {
+            font-family: 'Inter', sans-serif;
+        }
+
+        pre {
+            font-family: 'Courier New', monospace;
+        }
     </style>
 </head>
 
@@ -123,11 +323,14 @@
     <div id="blob2"
         class="absolute bottom-36 right-8 w-64 h-64 bg-[#FFB6B6] rounded-full blur-3xl opacity-20 parallax pointer-events-none">
     </div>
-    <div class="absolute top-1/3 right-1/4 w-28 h-28 border-2 border-[#7B6CF6] rounded-full opacity-15 rotating pointer-events-none">
+    <div
+        class="absolute top-1/3 right-1/4 w-28 h-28 border-2 border-[#7B6CF6] rounded-full opacity-15 rotating pointer-events-none">
     </div>
-    <div class="absolute top-56 left-6 w-20 h-20 border border-[#7B6CF6] rounded-full opacity-20 animate-pulse pointer-events-none">
+    <div
+        class="absolute top-56 left-6 w-20 h-20 border border-[#7B6CF6] rounded-full opacity-20 animate-pulse pointer-events-none">
     </div>
-    <div class="absolute bottom-24 left-1/3 w-32 h-32 bg-[#D8C8FF] rounded-full blur-3xl opacity-20 floating pointer-events-none">
+    <div
+        class="absolute bottom-24 left-1/3 w-32 h-32 bg-[#D8C8FF] rounded-full blur-3xl opacity-20 floating pointer-events-none">
     </div>
 
     <!-- Main container -->
@@ -228,44 +431,32 @@
                 </div>
 
                 <!-- Col 2: Local NLP -->
-                <div class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4">
+                <div class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-5">
                     <h2 class="font-semibold text-sm">Local NLP</h2>
 
-                    <!-- SVC Intent -->
+                    <!-- Analysis Card -->
                     <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">LinearSVC Intent
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Analysis
                         </p>
-                        <div id="svcBadge"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-gray-100 text-gray-400 transition-all duration-300">
-                            <span id="svcDot" class="w-2 h-2 rounded-full bg-gray-300 flex-shrink-0"></span>
-                            <span id="svcLabel">Awaiting input</span>
-                        </div>
-                        <!-- Confidence -->
-                        <div class="mt-3">
-                            <div class="flex justify-between text-[10px] text-gray-400 mb-1">
-                                <span>Confidence</span>
-                                <span id="svcConf">—</span>
-                            </div>
-                            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                <div id="svcConfBar" class="conf-fill" style="width:0%"></div>
-                            </div>
+                        <div id="analysisCard" class="analysis-card space-y-0">
+                            <!-- Rows injected by JS -->
+                            <p class="text-xs text-gray-300 italic">Awaiting input…</p>
                         </div>
                     </div>
 
-                    <!-- SpaCy Entities -->
+                    <!-- All-intents bar chart -->
                     <div class="flex-1">
-                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">SpaCy Entities
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Intent Scores
                         </p>
-                        <div id="entitiesWrap" class="min-h-[90px] max-h-48 overflow-y-auto">
-                            <p id="entEmpty" class="text-xs text-gray-300 italic">No entities detected yet</p>
-                            <div id="entChips" class="flex flex-wrap"></div>
+                        <div id="intentBars">
+                            <p class="text-xs text-gray-300 italic">No data yet</p>
                         </div>
                     </div>
 
-                    <!-- Intent comparison (shown after first result) -->
+                    <!-- Model comparison (shown after first result) -->
                     <div id="intentCompare" class="hidden pt-4 border-t border-gray-100">
-                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Model Comparison
-                        </p>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Model
+                            Comparison</p>
                         <div class="space-y-1.5">
                             <div class="flex justify-between text-xs">
                                 <span class="text-gray-400">SVC (local)</span>
@@ -294,8 +485,7 @@
                     <div class="flex-1 bg-[#FAFAFA] rounded-xl p-4 overflow-y-auto max-h-64">
                         <pre id="structured" class="text-xs whitespace-pre-wrap leading-relaxed text-gray-700"></pre>
                     </div>
-                    <div id="suggestionsPanel"
-                        class="hidden mt-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
+                    <div id="suggestionsPanel" class="hidden mt-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
                         <p class="text-[10px] font-semibold uppercase tracking-widest text-amber-700 mb-2">Clarity Gaps
                         </p>
                         <ul id="suggestionsList" class="list-disc pl-4 space-y-1 text-xs text-amber-800"></ul>
@@ -359,7 +549,8 @@
                             <textarea id="mCommand" rows="5"
                                 placeholder="This is a FastAPI REST project. Always consider rate limiting, versioning, and auth in your analysis."
                                 class="w-full bg-[#FAFAFA] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#7B6CF6] resize-none"></textarea>
-                            <p class="text-[10px] text-gray-400 mt-1">This text is appended to your transcript before GPT
+                            <p class="text-[10px] text-gray-400 mt-1">This text is appended to your transcript before
+                                GPT
                                 structures it.</p>
                         </div>
                         <div>
@@ -567,47 +758,58 @@
            NLP PANEL
         ══════════════════════════════════════════════════ */
         const INTENT_STYLE = {
-            debug:    { bg: '#FEE2E2', fg: '#991B1B', dot: '#EF4444' },
-            generate: { bg: '#DCFCE7', fg: '#166534', dot: '#22C55E' },
-            refactor: { bg: '#DBEAFE', fg: '#1E40AF', dot: '#3B82F6' },
-            explain:  { bg: '#FEF3C7', fg: '#92400E', dot: '#F59E0B' },
-            scaffold: { bg: '#CCFBF1', fg: '#134E4A', dot: '#14B8A6' },
-            test:     { bg: '#EDE9FE', fg: '#4C1D95', dot: '#8B5CF6' },
-            document: { bg: '#FFF7ED', fg: '#7C2D12', dot: '#EA580C' },
-        };
-        const ENT_COLOR = {
-            ERROR: '#FEE2E2', FRAMEWORK: '#DBEAFE', LANG: '#DCFCE7', LANGUAGE: '#DCFCE7',
-            ORG: '#F3F4F6', PERSON: '#FEF9C3', PRODUCT: '#EDE9FE', GPE: '#CCFBF1',
-            DATE: '#FFF7ED', CARDINAL: '#F3F4F6', TIME: '#FFF7ED', default: '#F0F0F0',
+            debug: { bg: '#FEE2E2', fg: '#991B1B' },
+            generate: { bg: '#DCFCE7', fg: '#166534' },
+            refactor: { bg: '#DBEAFE', fg: '#1E40AF' },
+            explain: { bg: '#FEF3C7', fg: '#92400E' },
+            scaffold: { bg: '#CCFBF1', fg: '#134E4A' },
+            test: { bg: '#EDE9FE', fg: '#4C1D95' },
+            document: { bg: '#FFF7ED', fg: '#7C2D12' },
         };
 
         function renderNLP(nlp) {
-            const style = INTENT_STYLE[nlp.svc_intent] || { bg: '#F3F4F6', fg: '#374151', dot: '#9CA3AF' };
-            const badge = $('svcBadge');
-            badge.style.background = style.bg;
-            badge.style.color = style.fg;
-            $('svcDot').style.background = style.dot;
-            $('svcLabel').textContent = nlp.svc_intent;
+            // ── Analysis JSON block ──────────────────────────────────────────
+            const a = nlp.analysis || {};
+            const displayObj = {
+                raw_utterance: a.raw_utterance ?? null,
+                normalized: a.normalized ?? null,
+                intent: a.intent ?? null,
+                entities: {
+                    language: (a.entities?.language) ?? null,
+                    framework: (a.entities?.framework) ?? null,
+                    error_type: (a.entities?.error_type) ?? null,
+                    component: (a.entities?.component) ?? null,
+                },
+            };
+            $('analysisCard').innerHTML =
+                `<pre style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:11px;line-height:1.6;color:#374151;">${JSON.stringify(displayObj, null, 2)}</pre>`;
 
-            const conf = Math.min(nlp.svc_confidence || 0, 100);
-            $('svcConf').textContent = conf.toFixed(1) + '%';
-            $('svcConfBar').style.width = conf + '%';
-
-            const chipsEl = $('entChips');
-            const emptyEl = $('entEmpty');
-            chipsEl.innerHTML = '';
-            if (nlp.ner_entities?.length > 0) {
-                emptyEl.classList.add('hidden');
-                nlp.ner_entities.forEach(e => {
-                    const chip = document.createElement('span');
-                    chip.className = 'ent-chip';
-                    chip.style.background = ENT_COLOR[e.label] || ENT_COLOR.default;
-                    chip.style.color = '#374151';
-                    chip.innerHTML = `<b>${e.text}</b><span style="opacity:.4;font-size:10px">${e.label}</span>`;
-                    chipsEl.appendChild(chip);
-                });
+            // ── Top-3 intent bar chart ──────────────────────────────────────
+            const allIntents = nlp.all_intents || [];
+            const barsEl = $('intentBars');
+            if (allIntents.length) {
+                const topIntent = allIntents[0].intent;
+                barsEl.innerHTML = allIntents.map((item, idx) => {
+                    const pct = (item.confidence * 100).toFixed(1);
+                    const isTop = idx === 0;
+                    const isDim = item.confidence < 0.15;
+                    const opacity = isDim ? '0.45' : '1';
+                    const tag = isTop
+                        ? `<span style="font-size:9px;background:#EDE9FE;color:#5A48D6;padding:1px 5px;border-radius:999px;margin-left:4px;font-weight:700;">primary</span>`
+                        : (isDim
+                            ? `<span style="font-size:9px;background:#F3F4F6;color:#9CA3AF;padding:1px 5px;border-radius:999px;margin-left:4px;">secondary</span>`
+                            : '');
+                    return `
+                    <div class="intent-row ${isTop ? 'ir-top' : ''}" style="opacity:${opacity}">
+                        <span class="ir-label">${item.intent}</span>
+                        <div class="ir-bar-wrap">
+                            <div class="ir-bar" style="width:${pct}%"></div>
+                        </div>
+                        <span class="ir-pct">${pct}%${tag}</span>
+                    </div>`;
+                }).join('');
             } else {
-                emptyEl.classList.remove('hidden');
+                barsEl.innerHTML = '<p class="text-xs text-gray-300 italic">No intent data</p>';
             }
         }
 

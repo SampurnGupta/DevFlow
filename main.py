@@ -107,30 +107,108 @@ MODE_INSTRUCTIONS: dict[str, str] = {
 
 # ── NLP Pipeline ───────────────────────────────────────────────────────────
 
+# Filler words stripped during normalization
+_FILLER_WORDS = {
+    "um", "uh", "like", "you know", "so", "basically", "literally",
+    "actually", "hmm", "er", "ah", "right", "okay", "ok",
+}
+
+def _normalize(text: str) -> str:
+    """Strip leading/trailing filler words and collapse extra whitespace."""
+    import re
+    tokens = text.strip().split()
+    # Drop leading filler tokens
+    while tokens and tokens[0].lower().rstrip(',') in _FILLER_WORDS:
+        tokens.pop(0)
+    normalized = ' '.join(tokens)
+    # Collapse runs of whitespace
+    normalized = re.sub(r'\s+', ' ', normalized).strip()
+    return normalized
+
+
+def _structure_entities(doc) -> dict:
+    """
+    Map SpaCy entity labels to structured slots:
+      language, framework, error_type, component
+    Unmapped labels are folded into 'component' as a last resort.
+    """
+    slots: dict[str, str | None] = {
+        "language": None,
+        "framework": None,
+        "error_type": None,
+        "component": None,
+    }
+    # Labels that map directly to component if nothing better fits
+    _component_labels = {"ORG", "PRODUCT", "GPE", "PERSON", "WORK_OF_ART", "FAC"}
+
+    for ent in doc.ents:
+        label = ent.label_.upper()
+        val = ent.text
+        if label in ("LANG", "LANGUAGE"):
+            slots["language"] = val
+        elif label == "FRAMEWORK":
+            slots["framework"] = val
+        elif label == "ERROR":
+            slots["error_type"] = val
+        elif label in _component_labels and slots["component"] is None:
+            slots["component"] = val
+
+    return slots
+
+
 def run_local_nlp(text: str) -> dict:
     """Run LinearSVC intent classification and SpaCy NER. Models are pre-loaded."""
-    # Intent classification
-    raw_id = str(svc_pipeline.predict([text])[0])
+    raw_utterance = text
+    normalized = _normalize(text)
+    analysis_text = normalized or text  # fall back to original if blank after normalizing
+
+    # ── Intent classification ─────────────────────────────────────────────
+    raw_id = str(svc_pipeline.predict([analysis_text])[0])
     intent = label_map.get(raw_id, raw_id)
 
-    # Confidence — prefer predict_proba; fall back to softmax(decision_function)
+    # Probability vector — prefer predict_proba; fall back to softmax(decision_function)
     try:
-        proba = svc_pipeline.predict_proba([text])[0]
-        confidence = round(float(np.max(proba)) * 100, 1)
+        proba = svc_pipeline.predict_proba([analysis_text])[0]
     except (AttributeError, Exception):
-        raw = svc_pipeline.decision_function([text])[0]
-        exp_s = np.exp(raw - np.max(raw))
+        raw_df = svc_pipeline.decision_function([analysis_text])[0]
+        exp_s = np.exp(raw_df - np.max(raw_df))
         proba = exp_s / exp_s.sum()
-        confidence = round(float(np.max(proba)) * 100, 1)
 
-    # Named entity recognition
-    doc = nlp(text)
-    entities = [{"text": ent.text, "label": ent.label_} for ent in doc.ents]
+    top_confidence = round(float(np.max(proba)), 4)
+    low_confidence = top_confidence < 0.50
+
+    # Build ranked list — always top 3 intents by confidence
+    n_classes = len(proba)
+    all_intents = sorted(
+        [
+            {
+                "intent": label_map.get(str(i), str(i)),
+                "confidence": round(float(proba[i]), 4),
+            }
+            for i in range(n_classes)
+        ],
+        key=lambda x: x["confidence"],
+        reverse=True,
+    )[:3]
+
+    # ── Named entity recognition ──────────────────────────────────────────
+    doc = nlp(analysis_text)
+    raw_entities = [{"text": ent.text, "label": ent.label_} for ent in doc.ents]
+    structured_entities = _structure_entities(doc)
 
     return {
+        # Legacy fields (still used by session timeline / compare panel)
         "svc_intent": intent,
-        "svc_confidence": confidence,
-        "ner_entities": entities,
+        "svc_confidence": round(top_confidence * 100, 1),
+        "ner_entities": raw_entities,
+        # Rich NLP analysis fields
+        "analysis": {
+            "raw_utterance": raw_utterance,
+            "normalized": analysis_text,
+            "intent": intent,
+            "entities": structured_entities,
+        },
+        "all_intents": all_intents,
     }
 
 
